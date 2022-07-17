@@ -4,7 +4,7 @@ var lower=document.querySelector("#lower-half")
 
 
 // 0. Check the user input is valid
-function validateInput() {
+function inputExists() {
     var userInput=document.querySelector("input")
     if (!userInput.value) {
         console.log("no value returned")
@@ -15,7 +15,7 @@ function validateInput() {
 
 
 // 1. clears any existing content out of the card
-function clearDisplay() {
+function wipeRow() {
     upper.innerHTML=""
     lower.innerHTML=""
 }
@@ -32,8 +32,8 @@ function clearDisplay() {
 
 function executePrimaryButton(event) {
     event.preventDefault()
-    if (!validateInput()) {return}
-    clearDisplay()
+    if (!inputExists()) {return}
+    wipeRow()
 
 
     return
