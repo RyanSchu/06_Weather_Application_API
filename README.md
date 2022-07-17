@@ -51,3 +51,6 @@ event listener does 5 things in order
 
 alternatively the api data could be stored in local storage and just rerendered each time, but I'll think about it
 
+
+
+ https://ryanschu.github.io/06_Weather_Application_API/
