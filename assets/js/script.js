@@ -1,7 +1,19 @@
+// startup
 var form=document.querySelector("form")
 var upper=document.querySelector("#upper-half")
 var lower=document.querySelector("#lower-half")
 var apiKey="ee286a3856523d150fd0f37bdb12a2b8"
+var searchHistory=loadLocal()
+
+// Load Local Storage or create empty array
+function loadLocal() {
+    if (localStorage.getItem("searchHistory") === null) {
+        return []
+    } else {
+        return JSON.parse(localStorage.getItem("searchHistory"))
+    }
+}
+
 
 // 0. Check the user input is valid
 function inputExists() {
@@ -34,6 +46,8 @@ function geoCode() {
         })
         .then(function (data) {
             // console.log(data)
+            createButton(userInput.value)
+            updateLocal(userInput.value)
             getWeather(coordinates=data.coord)
         })
 
@@ -118,24 +132,33 @@ function createLower() {
 
 // 4. saves the city name as a button that executes 1 & 2 & 3
 
+function createButton(input) {
+    if (searchHistory.includes(input)){return}
+    let buttonList = document.querySelector(".button-list")
+    let button = document.createElement("button")
+    button.textContent = input
+    buttonList.appendChild(button)
+}
 
 // 5. the list of citys that are buttons should then be saved to local storage
 
+function updateLocal(input) {
+    localStorage.setItem("searchHistory",JSON.stringify(searchHistory.unshift(input)))
+}
 
 function executePrimaryButton(event) {
     event.preventDefault()
     if (!inputExists()) {return}
     geoCode()
-    
     // getWeather(coords)
     // return
 }
 
+
+
+
+
 form.addEventListener("submit",executePrimaryButton)
-
-
-
-
 function executeSecondaryButton() {
     
     return
