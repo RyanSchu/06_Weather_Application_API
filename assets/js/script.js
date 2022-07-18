@@ -53,13 +53,13 @@ function geoCode(input) {
             // console.log(data)
             if (!searchHistory.includes(input)) createButton(input)
             updateLocal(input)
-            getWeather(coordinates=data.coord)
+            getWeather(coordinates=data.coord,input)
         })
 
 }
 
 // 2b  executes api call that returns current and future weather conditions (see acceptance criteria for details)
-function getWeather(coordinates) {
+function getWeather(coordinates,input) {
     let requestURL=`https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,hourly,alerts&appid=${apiKey}`
     fetch(requestURL) 
         .then(function (response) {
@@ -71,7 +71,7 @@ function getWeather(coordinates) {
         })
         .then(function (data) {
             wipeRow()
-            createUpper(data)
+            createUpper(data,input)
             createLower(data)
             return data
         })
@@ -87,20 +87,19 @@ function readableTimeStamp(timestamp){
 }
 
 // 3. renders that information to the page
-function createUpper(data) {
+function createUpper(data,input) {
     console.log(data)
     let upper = document.querySelector("#upper-half")
-    upperHeader(upper,data)
+    upperHeader(upper,data,input)
     upperContent(upper,data)
 }
 
-function upperHeader(div,data) {
+function upperHeader(div,data,value) {
     let header = document.createElement("h3")
     let img = document.createElement("img")
     img.setAttribute("src",`http://openweathermap.org/img/wn/${data.current.weather[0].icon}@2x.png`)
     let subHeader = document.createElement("h4")
-    let userInput=document.querySelector("input")
-    header.textContent = userInput.value + " " + readableTimeStamp(data.current.dt).format("MM/DD/YYYY")
+    header.textContent = value + " " + readableTimeStamp(data.current.dt).format("MM/DD/YYYY")
     header.appendChild(img)
     subHeader.textContent = "Current Time: " + readableTimeStamp(data.current.dt).format("hh:mm")
     div.appendChild(header)
