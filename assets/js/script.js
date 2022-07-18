@@ -38,9 +38,8 @@ function wipeRow() {
 }
 
 // 2. executes an api call to weather api that geocodes city
-function geoCode() {
-    let userInput=document.querySelector("input")
-    let requestURL=`https://api.openweathermap.org/data/2.5/weather?q=${userInput.value}&appid=${apiKey}`
+function geoCode(input) {
+    let requestURL=`https://api.openweathermap.org/data/2.5/weather?q=${input}&appid=${apiKey}`
     fetch(requestURL) 
         .then(function (response) {
             if (!response.status === 200) {
@@ -52,8 +51,8 @@ function geoCode() {
         })
         .then(function (data) {
             // console.log(data)
-            if (!searchHistory.includes(userInput.value)) createButton(userInput.value)
-            updateLocal(userInput.value)
+            if (!searchHistory.includes(input)) createButton(input)
+            updateLocal(input)
             getWeather(coordinates=data.coord)
         })
 
@@ -73,6 +72,7 @@ function getWeather(coordinates) {
         .then(function (data) {
             wipeRow()
             createUpper(data)
+            createLower(data)
             return data
         })
 }
@@ -131,8 +131,31 @@ function kelvinToFarenheit(kelvin) {
     return Math.round(((kelvin - 273.15)*9/5) + 32)
 }
 
-function createLower() {
+function createLower(data) {
+    let div = document.querySelector("#lower-half")
+    for (i=1; i<=5;i++) {
+        card = document.createElement("div")
+        cardHead=document.createElement("h4")
+        let img = document.createElement("img")
+        img.setAttribute("src",`http://openweathermap.org/img/wn/${data.daily[i].weather[0].icon}@2x.png`)
+        cardHead.textContent = readableTimeStamp(data.daily[i].dt).format("MM/DD/YYYY")
+        let ul = document.createElement("ul")
+        let temp = document.createElement("li")
+        let wind = document.createElement("li")
+        let humidity = document.createElement("li")
+    
+        temp.textContent= "Temperature: " + kelvinToFarenheit(data.current.temp) + " F"
+        wind.textContent = "Wind Speed: " +data.current.wind_speed + " MPH"
+        humidity.textContent = "Humidity: " + data.current.humidity + "%"
+    
+        ul.appendChild(temp)
+        ul.appendChild(wind)
+        ul.appendChild(humidity)
 
+        div.appendChild(cardHead)
+        div.appendChild(img)
+        div.appendChild(ul)
+    }
 }
 
 
@@ -162,14 +185,17 @@ function updateLocal(input) {
 function executePrimaryButton(event) {
     event.preventDefault()
     if (!inputExists()) {return}
-    geoCode()
+    let userInput=document.querySelector("input").value
+
+    geoCode(userInput)
     // getWeather(coords)
     // return
 }
 
 
-function executeSecondaryButton() {
-    console.log("hello")
+function executeSecondaryButton(target) {
+    console.log(target.id)
+    geoCode(target.id)
     return
 }
 
@@ -179,5 +205,5 @@ form.addEventListener("submit",executePrimaryButton)
 buttonList.onclick = function(event) {
     let target = event.target
     if (target.className != "secondaryButton") return
-    executeSecondaryButton()
+    executeSecondaryButton(target)
 }
