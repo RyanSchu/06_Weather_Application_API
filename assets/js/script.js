@@ -33,6 +33,7 @@ function geoCode() {
             return response.json()
         })
         .then(function (data) {
+            // console.log(data)
             getWeather(coordinates=data.coord)
         })
 
@@ -50,6 +51,8 @@ function getWeather(coordinates) {
             return response.json()
         })
         .then(function (data) {
+            wipeRow()
+            createUpper(data)
             return data
         })
 }
@@ -58,14 +61,59 @@ function getWeather(coordinates) {
 // formats unix timestamp
 // leveraged from https://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
 function readableTimeStamp(timestamp){
-    // Create a new JavaScript Date object based on the timestamp
-    // multiplied by 1000 so that the argument is in milliseconds, not seconds.
-    var date = new Date(timestamp * 1000);
-    console.log(date)
+    let  date = new Date(timestamp * 1000);
+    let formatedDate = moment(date)
+    return formatedDate
 }
 
 // 3. renders that information to the page
+function createUpper(data) {
+    console.log(data)
+    let upper = document.querySelector("#upper-half")
+    upperHeader(upper,data)
+    upperContent(upper,data)
+}
 
+function upperHeader(div,data) {
+    let header = document.createElement("h3")
+    let img = document.createElement("img")
+    img.setAttribute("src",`http://openweathermap.org/img/wn/${data.current.weather[0].icon}@2x.png`)
+    let subHeader = document.createElement("h4")
+    let userInput=document.querySelector("input")
+    header.textContent = userInput.value + " " + readableTimeStamp(data.current.dt).format("MM/DD/YYYY")
+    header.appendChild(img)
+    subHeader.textContent = "Current Time: " + readableTimeStamp(data.current.dt).format("hh:mm")
+    div.appendChild(header)
+    div.appendChild(subHeader)
+}
+
+
+function upperContent(div,data) {
+    let ul = document.createElement("ul")
+    let temp = document.createElement("li")
+    let wind = document.createElement("li")
+    let humidity = document.createElement("li")
+    let uvi = document.createElement("li")
+
+    temp.textContent= "Temperature: " + kelvinToFarenheit(data.current.temp) + " F"
+    wind.textContent = "Wind Speed: " +data.current.wind_speed + " MPH"
+    humidity.textContent = "Humidity: " + data.current.humidity + "%"
+    uvi.textContent = "UV Index: " + data.current.uvi
+
+    ul.appendChild(temp)
+    ul.appendChild(wind)
+    ul.appendChild(humidity)
+    ul.appendChild(uvi)
+    div.appendChild(ul)
+}
+
+function kelvinToFarenheit(kelvin) {
+    return Math.round(((kelvin - 273.15)*9/5) + 32)
+}
+
+function createLower() {
+
+}
 
 
 // 4. saves the city name as a button that executes 1 & 2 & 3
@@ -78,7 +126,7 @@ function executePrimaryButton(event) {
     event.preventDefault()
     if (!inputExists()) {return}
     geoCode()
-    // wipeRow()
+    
     // getWeather(coords)
     // return
 }
