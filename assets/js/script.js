@@ -14,6 +14,12 @@ function loadLocal() {
     }
 }
 
+function renderLocal(array) {
+    for (i=0; i < array.length; i ++) {
+        console.log(array[i])
+        createButton(array[i])
+    }
+}
 
 // 0. Check the user input is valid
 function inputExists() {
@@ -46,7 +52,7 @@ function geoCode() {
         })
         .then(function (data) {
             // console.log(data)
-            createButton(userInput.value)
+            if (!searchHistory.includes(userInput.value)) createButton(userInput.value)
             updateLocal(userInput.value)
             getWeather(coordinates=data.coord)
         })
@@ -133,7 +139,6 @@ function createLower() {
 // 4. saves the city name as a button that executes 1 & 2 & 3
 
 function createButton(input) {
-    if (searchHistory.includes(input)){return}
     let buttonList = document.querySelector(".button-list")
     let button = document.createElement("button")
     button.textContent = input
@@ -164,11 +169,12 @@ function executePrimaryButton(event) {
 
 
 function executeSecondaryButton() {
-    
+    console.log("hello")
     return
 }
 
 
+renderLocal(searchHistory)
 form.addEventListener("submit",executePrimaryButton)
 buttonList.onclick = function(event) {
     let target = event.target
