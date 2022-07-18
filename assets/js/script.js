@@ -4,7 +4,7 @@ var upper=document.querySelector("#upper-half")
 var lower=document.querySelector("#lower-half")
 var apiKey="ee286a3856523d150fd0f37bdb12a2b8"
 var searchHistory=loadLocal()
-
+var buttonList=document.querySelector(".button-list")
 // Load Local Storage or create empty array
 function loadLocal() {
     if (localStorage.getItem("searchHistory") === null) {
@@ -137,13 +137,21 @@ function createButton(input) {
     let buttonList = document.querySelector(".button-list")
     let button = document.createElement("button")
     button.textContent = input
+    button.setAttribute("id",input)
+    button.setAttribute("class","secondaryButton")
     buttonList.appendChild(button)
 }
 
 // 5. the list of citys that are buttons should then be saved to local storage
 
 function updateLocal(input) {
-    localStorage.setItem("searchHistory",JSON.stringify(searchHistory.unshift(input)))
+    console.log(input)
+    if (searchHistory.includes(input)){
+        return
+    }
+    searchHistory.unshift(input)
+    console.log(searchHistory)
+    localStorage.setItem("searchHistory",JSON.stringify(searchHistory))
 }
 
 function executePrimaryButton(event) {
@@ -155,11 +163,15 @@ function executePrimaryButton(event) {
 }
 
 
-
-
-
-form.addEventListener("submit",executePrimaryButton)
 function executeSecondaryButton() {
     
     return
+}
+
+
+form.addEventListener("submit",executePrimaryButton)
+buttonList.onclick = function(event) {
+    let target = event.target
+    if (target.className != "secondaryButton") return
+    executeSecondaryButton()
 }
