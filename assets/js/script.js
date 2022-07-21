@@ -2,9 +2,10 @@
 var form=document.querySelector("form")
 var upper=document.querySelector("#upper-half")
 var lower=document.querySelector("#lower-half")
+var buttonList=document.querySelector("#button-list")
 var apiKey="ee286a3856523d150fd0f37bdb12a2b8"
 var searchHistory=loadLocal()
-var buttonList=document.querySelector(".button-list")
+
 // Load Local Storage or create empty array
 function loadLocal() {
     if (localStorage.getItem("searchHistory") === null) {
@@ -90,6 +91,7 @@ function readableTimeStamp(timestamp){
 function createUpper(data,input) {
     console.log(data)
     let upper = document.querySelector("#upper-half")
+    upper.style.display="block"
     upperHeader(upper,data,input)
     upperContent(upper,data)
 }
@@ -132,8 +134,10 @@ function kelvinToFarenheit(kelvin) {
 
 function createLower(data) {
     let div = document.querySelector("#lower-half")
+    div.style.display="flex"
     for (i=1; i<=5;i++) {
         card = document.createElement("div")
+        card.setAttribute("class","card col")
         cardHead=document.createElement("h4")
         let img = document.createElement("img")
         img.setAttribute("src",`http://openweathermap.org/img/wn/${data.daily[i].weather[0].icon}@2x.png`)
@@ -151,9 +155,11 @@ function createLower(data) {
         ul.appendChild(wind)
         ul.appendChild(humidity)
 
-        div.appendChild(cardHead)
-        div.appendChild(img)
-        div.appendChild(ul)
+        card.appendChild(cardHead)
+        card.appendChild(img)
+        card.appendChild(ul)
+
+        div.appendChild(card)
     }
 }
 
@@ -161,12 +167,15 @@ function createLower(data) {
 // 4. saves the city name as a button that executes 1 & 2 & 3
 
 function createButton(input) {
-    let buttonList = document.querySelector(".button-list")
     let button = document.createElement("button")
     button.textContent = input
     button.setAttribute("id",input)
-    button.setAttribute("class","secondaryButton")
-    buttonList.appendChild(button)
+    button.setAttribute("class","secondaryButton btn btn-outline-secondary w-100")
+    button.setAttribute("button-type","secondaryButton")
+    let li = document.createElement("li")
+    li.setAttribute("class","nav-item")
+    li.appendChild(button)
+    buttonList.appendChild(li)
 }
 
 // 5. the list of citys that are buttons should then be saved to local storage
@@ -203,6 +212,6 @@ renderLocal(searchHistory)
 form.addEventListener("submit",executePrimaryButton)
 buttonList.onclick = function(event) {
     let target = event.target
-    if (target.className != "secondaryButton") return
+    if (target.getAttribute("button-type") != "secondaryButton") return
     executeSecondaryButton(target)
 }
