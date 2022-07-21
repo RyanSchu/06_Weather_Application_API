@@ -117,9 +117,9 @@ function upperContent(div,data) {
     let uvi = document.createElement("li")
 
     temp.textContent= "Temperature: " + kelvinToFarenheit(data.current.temp) + " F"
-    wind.textContent = "Wind Speed: " +data.current.wind_speed + " MPH"
+    wind.textContent = "Wind Speed: " + data.current.wind_speed + " MPH"
     humidity.textContent = "Humidity: " + data.current.humidity + "%"
-    uvi.textContent = "UV Index: " + data.current.uvi
+    uvi.appendChild(createUVBadge(data.current.uvi))
 
     ul.appendChild(temp)
     ul.appendChild(wind)
@@ -130,6 +130,30 @@ function upperContent(div,data) {
 
 function kelvinToFarenheit(kelvin) {
     return Math.round(((kelvin - 273.15)*9/5) + 32)
+}
+
+function createUVBadge(uvi) {
+    let badge= document.createElement("span")
+    badge.textContent=uvi
+    badge.setAttribute("class","badge")
+    palette=fetchBadgeColors(uvi)
+    badge.style.color=palette.color
+    badge.style.backgroundColor=palette.bgColor
+    return badge
+}
+
+function fetchBadgeColors(uvi) {
+    if (Number(uvi) < 3) {
+        return {bgColor: "green",color:"white"}
+    } else  if (Number(uvi) < 6) {
+        return {bgColor: "yellow",color:"black"}
+    } else if (Number(uvi) < 8) {
+        return {bgColor: "orange",color:"white"}
+    } else if (Number(uvi) < 11) {
+        return {bgColor: "red",color:"white"}
+    } else {
+        return {bgColor: "purple",color:"white"}
+    }
 }
 
 function createLower(data) {
